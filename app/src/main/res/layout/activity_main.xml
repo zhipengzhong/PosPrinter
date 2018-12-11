@@ -207,15 +207,23 @@
                     android:text="打印NV图"
                     android:textColor="#555555"/>
 
-
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:background="@drawable/bg_setting_item"
                 android:layout_marginLeft="5dp"
                 android:layout_weight="1"
                 android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/print_raster"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:gravity="center"
+                    android:text="打印光栅图"
+                    android:textColor="#555555"/>
 
             </LinearLayout>
 

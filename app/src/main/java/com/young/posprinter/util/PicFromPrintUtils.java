@@ -114,6 +114,50 @@ public class PicFromPrintUtils {
 //        return data;
     }
 
+    public static byte[] disposeRaster(Bitmap bitmap) {
+
+//        1d 76 30 00 03 00 09 00
+//        FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
+//        FF FF FF
+
+
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        int Wh = (width / 8) / 256 > 255 ? 255 : (width / 8) / 256;
+        int Wl = (width / 8) % 256;
+        int Hh = height / 256 > 255 ? 255 : height / 256;
+        int Hl = height % 256;
+        int W = Wh * 256 + Wl;
+        int H = Hh * 256 + Hl;
+        int len = (W * H) + 10;
+        byte[] data = new byte[len];
+        int index = 0;
+        //初始化打印机 清楚缓存
+        data[index++] = 0x1B;
+        data[index++] = 0x40;
+
+        //打印光栅图
+        data[index++] = 0x1D;
+        data[index++] = 0x76;
+        data[index++] = 0x30;
+        data[index++] = 0x00;
+        data[index++] = (byte) Wl;
+        data[index++] = (byte) Wh;
+        data[index++] = (byte) Hl;
+        data[index++] = (byte) Hh;
+        for (int i = 0; i < H; i++) {
+            for (int j = 0; j < W; j++) {
+                byte b = 0;
+                for (int k = 0; k < 8; k++) {
+                    byte b1 = px2Byte(j * 8 + k, i, bitmap);
+                    b = (byte) ((b << 1) + b1);
+                }
+                data[index++] = b;
+            }
+        }
+        return data;
+    }
+
     public static byte[] draw3PxPoint(Bitmap bit) {
         int width = bit.getWidth();
         int height = bit.getHeight();
