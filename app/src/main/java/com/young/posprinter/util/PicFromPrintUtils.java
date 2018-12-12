@@ -123,12 +123,20 @@ public class PicFromPrintUtils {
 
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
-        int Wh = (width / 8) / 256 > 255 ? 255 : (width / 8) / 256;
-        int Wl = (width / 8) % 256;
+        int temp = width % 8 == 0 ? width / 8 : width / 8 + 1;
+        int Wh = temp / 256 > 255 ? 255 : temp / 256;
+        int Wl = temp % 256;
         int Hh = height / 256 > 255 ? 255 : height / 256;
         int Hl = height % 256;
         int W = Wh * 256 + Wl;
         int H = Hh * 256 + Hl;
+
+        Bitmap bit = Bitmap.createBitmap(W * 8, H, Bitmap.Config.RGB_565);
+        Canvas canvas = new Canvas(bit);
+        Paint paint = new Paint();
+        canvas.drawColor(0xFFFFFFFF);
+        canvas.drawBitmap(bitmap, 0, 0, paint);
+
         int len = (W * H) + 10;
         byte[] data = new byte[len];
         int index = 0;
@@ -149,7 +157,7 @@ public class PicFromPrintUtils {
             for (int j = 0; j < W; j++) {
                 byte b = 0;
                 for (int k = 0; k < 8; k++) {
-                    byte b1 = px2Byte(j * 8 + k, i, bitmap);
+                    byte b1 = px2Byte(j * 8 + k, i, bit);
                     b = (byte) ((b << 1) + b1);
                 }
                 data[index++] = b;
