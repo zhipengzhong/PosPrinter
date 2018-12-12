@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -231,10 +234,30 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         localMedias = PictureSelector.obtainMultipleResult(data);
                         localMedia = localMedias.get(0);
-                        Bitmap bitmap = BitmapFactory.decodeFile(localMedia.getCutPath());
+
+//                        String file = localMedia.getCutPath();
+//                        BitmapFactory.Options opts = new BitmapFactory.Options();
+//                        opts.inJustDecodeBounds = true;
+//                        BitmapFactory.decodeFile(file, opts);
+//                        opts.inSampleSize = Math.round(opts.outWidth * 1.0f / 576);
+//                        opts.inJustDecodeBounds = false;
+//                        Bitmap bitmap = BitmapFactory.decodeFile(file, opts);
+
+
+                        String file = localMedia.getCutPath();
+                        Bitmap bitmap = BitmapFactory.decodeFile(file);
+                        //80打印机最大宽度567 58打印机最大宽度384
+                        float v = 576 * 1.0f / bitmap.getWidth();
+
+                        Matrix scaleMatrix = new Matrix();
+                        scaleMatrix.setScale(v, v, 0, 0);
+                        Bitmap bit = Bitmap.createBitmap((int) (bitmap.getWidth() * v), (int) (bitmap.getHeight() * v), Bitmap.Config.RGB_565);
+                        Canvas canvas = new Canvas(bit);
+                        canvas.setMatrix(scaleMatrix);
+                        canvas.drawBitmap(bitmap, 0, 0, new Paint(Paint.FILTER_BITMAP_FLAG));
 
                         if (mPrinterSerialPort != null) {
-                            mPrinterSerialPort.send(PicFromPrintUtils.disposeRaster(bitmap));
+                            mPrinterSerialPort.send(PicFromPrintUtils.disposeRaster(bit));
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
