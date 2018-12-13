@@ -131,11 +131,11 @@ public class PicFromPrintUtils {
         int W = Wh * 256 + Wl;
         int H = Hh * 256 + Hl;
 
-        Bitmap bit = Bitmap.createBitmap(W * 8, H, Bitmap.Config.RGB_565);
-        Canvas canvas = new Canvas(bit);
-        Paint paint = new Paint();
-        canvas.drawColor(0xFFFFFFFF);
-        canvas.drawBitmap(bitmap, 0, 0, paint);
+//        Bitmap bit = Bitmap.createBitmap(W * 8, H, Bitmap.Config.RGB_565);
+//        Canvas canvas = new Canvas(bit);
+//        Paint paint = new Paint();
+//        canvas.drawColor(0xFFFFFFFF);
+//        canvas.drawBitmap(bitmap, 0, 0, paint);
 
         int len = (W * H) + 10;
         byte[] data = new byte[len];
@@ -157,7 +157,10 @@ public class PicFromPrintUtils {
             for (int j = 0; j < W; j++) {
                 byte b = 0;
                 for (int k = 0; k < 8; k++) {
-                    byte b1 = px2Byte(j * 8 + k, i, bit);
+                    byte b1 = 0;
+                    if (j * 8 + k < width) {
+                        b1 = px2Byte(j * 8 + k, i, bitmap);
+                    }
                     b = (byte) ((b << 1) + b1);
                 }
                 data[index++] = b;
@@ -322,6 +325,9 @@ public class PicFromPrintUtils {
      * @return
      */
     private static int RGB2Gray(int r, int g, int b) {
+        if (r == 0 && g == 0 && b == 0) {
+            return 255;
+        }
         int gray = (int) (0.29900 * r + 0.58700 * g + 0.11400 * b);  //灰度转化公式
         return gray;
     }
