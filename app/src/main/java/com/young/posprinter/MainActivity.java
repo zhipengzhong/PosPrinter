@@ -251,7 +251,7 @@ public class MainActivity extends AppCompatActivity {
 
                         Matrix scaleMatrix = new Matrix();
                         scaleMatrix.setScale(v, v, 0, 0);
-                        Bitmap bit = Bitmap.createBitmap((int) (bitmap.getWidth() * v), (int) (bitmap.getHeight() * v), Bitmap.Config.RGB_565);
+                        Bitmap bit = Bitmap.createBitmap((int) (bitmap.getWidth() * v), (int) (bitmap.getHeight() * v), Bitmap.Config.ARGB_8888);
                         Canvas canvas = new Canvas(bit);
                         canvas.setMatrix(scaleMatrix);
                         canvas.drawBitmap(bitmap, 0, 0, new Paint(Paint.FILTER_BITMAP_FLAG));

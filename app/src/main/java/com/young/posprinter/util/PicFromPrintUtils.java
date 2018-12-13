@@ -307,7 +307,11 @@ public class PicFromPrintUtils {
         int red = (pixel & 0x00ff0000) >> 16; // 取高两位
         int green = (pixel & 0x0000ff00) >> 8; // 取中两位
         int blue = pixel & 0x000000ff; // 取低两位
+        if ((((pixel & 0xFF000000) >> 24) & 0xFF) == 0) {
+            return 0;
+        }
         int gray = RGB2Gray(red, green, blue);
+
         if (gray < 128) {
             b = 1;
         } else {
@@ -325,9 +329,6 @@ public class PicFromPrintUtils {
      * @return
      */
     private static int RGB2Gray(int r, int g, int b) {
-        if (r == 0 && g == 0 && b == 0) {
-            return 255;
-        }
         int gray = (int) (0.29900 * r + 0.58700 * g + 0.11400 * b);  //灰度转化公式
         return gray;
     }
