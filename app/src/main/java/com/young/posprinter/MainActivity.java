@@ -8,6 +8,8 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -45,6 +47,38 @@ public class MainActivity extends AppCompatActivity {
     private int mPosition = 0;
     private PrinterSerialPort mPrinterSerialPort;
     private String[] mEntryValues;
+    private Spinner mBaudRate;
+    private int mBaudRatePosition = 0;
+    public static String[] sBaudRateCom = new String[]{"50"
+            , "75"
+            , "110"
+            , "134"
+            , "150"
+            , "200"
+            , "300"
+            , "600"
+            , "1200"
+            , "1800"
+            , "2400"
+            , "4800"
+            , "9600"
+            , "19200"
+            , "38400"
+            , "57600"
+            , "115200"
+            , "230400"
+            , "460800"
+            , "500000"
+            , "576000"
+            , "921600"
+            , "1000000"
+            , "1152000"
+            , "1500000"
+            , "2000000"
+            , "2500000"
+            , "3000000"
+            , "3500000"
+            , "4000000"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,14 +86,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initView();
         setListener();
-        connectPrinter(0);
+        connectPrinter(mPosition, 0);
     }
 
-    private void connectPrinter(int position) {
+    private void connectPrinter(int position, int baudRatePosition) {
 //        if (position == 0) {
 //            mPrinterSerialPort = PrinterSerialPort.getSerialPortFroAuto();
 //        } else {
-        mPrinterSerialPort = new PrinterSerialPort(mEntryValues[position], "115200");
+        mPrinterSerialPort = new PrinterSerialPort(mEntryValues[position], sBaudRateCom[baudRatePosition]);
         try {
             mPrinterSerialPort.open();
         } catch (Exception e) {
@@ -83,7 +117,23 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mPosition = position;
-                connectPrinter(mPosition);
+                connectPrinter(mPosition, mBaudRatePosition);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, sBaudRateCom);
+        mBaudRate.setAdapter(adapter);
+        mBaudRate.setSelection(mBaudRatePosition);
+        mBaudRate.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mBaudRatePosition = position;
+                connectPrinter(mPosition, mBaudRatePosition);
             }
 
             @Override
@@ -195,6 +245,7 @@ public class MainActivity extends AppCompatActivity {
         mPrintTest = findViewById(R.id.print_test);
         mPrintNv = findViewById(R.id.print_nv);
         mPrintRaster = findViewById(R.id.print_raster);
+        mBaudRate = findViewById(R.id.baud_rate);
     }
 
     @Override
@@ -244,20 +295,26 @@ public class MainActivity extends AppCompatActivity {
 //                        Bitmap bitmap = BitmapFactory.decodeFile(file, opts);
 
 
+//                        String file = localMedia.getCutPath();
+//                        Bitmap bitmap = BitmapFactory.decodeFile(file);
+//                        //80打印机最大宽度567 58打印机最大宽度384
+//                        float v = 576 * 1.0f / bitmap.getWidth();
+//
+//                        Matrix scaleMatrix = new Matrix();
+//                        scaleMatrix.setScale(v, v, 0, 0);
+//                        Bitmap bit = Bitmap.createBitmap((int) (bitmap.getWidth() * v), (int) (bitmap.getHeight() * v), Bitmap.Config.ARGB_8888);
+//                        Canvas canvas = new Canvas(bit);
+//                        canvas.setMatrix(scaleMatrix);
+//
+//                        canvas.drawBitmap(bitmap, 0, 0, new Paint(Paint.FILTER_BITMAP_FLAG));
+//                        if (mPrinterSerialPort != null) {
+//                            mPrinterSerialPort.send(PicFromPrintUtils.disposeRaster(bit));
+//                        }
+
                         String file = localMedia.getCutPath();
                         Bitmap bitmap = BitmapFactory.decodeFile(file);
-                        //80打印机最大宽度567 58打印机最大宽度384
-                        float v = 576 * 1.0f / bitmap.getWidth();
-
-                        Matrix scaleMatrix = new Matrix();
-                        scaleMatrix.setScale(v, v, 0, 0);
-                        Bitmap bit = Bitmap.createBitmap((int) (bitmap.getWidth() * v), (int) (bitmap.getHeight() * v), Bitmap.Config.ARGB_8888);
-                        Canvas canvas = new Canvas(bit);
-                        canvas.setMatrix(scaleMatrix);
-                        canvas.drawBitmap(bitmap, 0, 0, new Paint(Paint.FILTER_BITMAP_FLAG));
-
                         if (mPrinterSerialPort != null) {
-                            mPrinterSerialPort.send(PicFromPrintUtils.disposeRaster(bit));
+                            mPrinterSerialPort.send(PicFromPrintUtils.disposeRaster(bitmap));
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
