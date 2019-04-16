@@ -122,7 +122,7 @@
                     android:textColor="#555555"/>
 
                 <EditText
-                    android:text="{LOGO}\n{L}{1}欢迎光临\n{L}{0}您的号码是：{1}{##}\n{L}{0}您办理的业务是：{1}{$$1}\n{L}{0}您前面还有{1}{@@}{0}人在等待\n{L}{0}请注意，过号作废，多谢合作！\n{L}{0}出票时间 {T{YYY-MM-DD hh:mm:ss}T}"
+                    android:text="{M}{LOGO}\n{M}{H88}{1}欢迎光临\n{L}{H33}{0}您的号码是：{1}{##}\n{L}{0}您办理的业务是：{1}{$$1}\n{L}{0}您前面还有{1}{@@}{0}人在等待\n{L}{0}请注意，过号作废，多谢合作！\n{L}{0}出票时间 {T{YYY-MM-DD hh:mm:ss}T}"
                     android:id="@+id/print_format"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

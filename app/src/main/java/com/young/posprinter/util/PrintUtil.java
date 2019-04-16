@@ -2,6 +2,8 @@ package com.young.posprinter.util;
 
 import android.text.TextUtils;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.regex.Matcher;
@@ -72,6 +74,21 @@ public class PrintUtil {
         trim = trim.replaceAll("\n", new String(new byte[]{0x0A}));
         trim = trim.replaceAll("\r", "");
 
+        Pattern pattern;
+        Matcher matcher;
+
+        pattern = Pattern.compile("(?<=\\{H)(.+?)(?=\\})");
+        matcher = pattern.matcher(trim);
+        while (matcher.find()) {
+            String group = matcher.group();
+            try {
+                int lineHeight = Integer.parseInt(group);
+                if (lineHeight >= 0 && lineHeight <= 255)
+                    trim = trim.replaceAll("\\{H" + group + "\\}", new String(new byte[]{0x1B, 0x33, (byte) lineHeight}));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        }
 
         Date date = new Date(System.currentTimeMillis());
         int hours = DateUtil.getHours(date);
@@ -82,8 +99,8 @@ public class PrintUtil {
         int day = DateUtil.getDay(date);
         String week = DateUtil.getWeekString(date);
 
-        Pattern pattern = Pattern.compile("(?<=\\{T\\{)(.+?)(?=\\}T\\})");
-        Matcher matcher = pattern.matcher(trim);
+        pattern = Pattern.compile("(?<=\\{T\\{)(.+?)(?=\\}T\\})");
+        matcher = pattern.matcher(trim);
         while (matcher.find()) {
             String group = matcher.group();
             String time = group.replaceAll("YYYY", String.valueOf(year));
